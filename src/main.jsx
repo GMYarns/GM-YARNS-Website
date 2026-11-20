@@ -8,11 +8,43 @@ import {
 } from 'lucide-react';
 import './style.css';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Values are injected by Vite at build time from the deploy environment.
+// Changing them in Netlify requires a new deploy to take effect.
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim().replace(/\/+$/, '');
+const supabaseKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 const whatsapp = (import.meta.env.VITE_WHATSAPP_NUMBER || '919489973418').replace(/\D/g, '');
 const OWNER_UID = '047af1f5-8dd6-483a-b2fb-c9950a796b47';
-const db = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+
+function jwtRole(key) {
+  try {
+    const payload = key.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(payload)).role;
+  } catch {
+    return undefined;
+  }
+}
+
+// Returns a human-readable problem with the Supabase settings, or '' if they look valid.
+function supabaseConfigProblem(url, key) {
+  if (!url || !key) return 'Supabase settings are not configured yet.';
+  if (!/^https:\/\/[^/\s]+$/.test(url)) {
+    return 'VITE_SUPABASE_URL is not a valid project URL (expected https://<project>.supabase.co).';
+  }
+  if (/^https?:\/\//i.test(key)) {
+    return 'VITE_SUPABASE_ANON_KEY contains a URL instead of the publishable/anon key.';
+  }
+  if (key.startsWith('sb_secret_') || jwtRole(key) === 'service_role') {
+    return 'VITE_SUPABASE_ANON_KEY is a secret/service-role key. Use the publishable (anon) key instead.';
+  }
+  if (!key.startsWith('sb_publishable_') && !key.startsWith('eyJ')) {
+    return 'VITE_SUPABASE_ANON_KEY does not look like a Supabase publishable/anon key.';
+  }
+  return '';
+}
+
+const configProblem = supabaseConfigProblem(supabaseUrl, supabaseKey);
+if (configProblem) console.error(`[GM YARNS] ${configProblem}`);
+const db = configProblem ? null : createClient(supabaseUrl, supabaseKey);
 
 const money = (v) =>
   v === null || v === undefined || v === ''
@@ -49,7 +81,7 @@ function App() {
 
   async function loadProducts() {
     if (!db) {
-      setError('Supabase settings are not configured yet.');
+      setError(configProblem);
       setLoading(false);
       return;
     }
@@ -74,7 +106,7 @@ function App() {
   useEffect(() => {
     if (!db) {
       setLoading(false);
-      setError('Supabase settings are not configured yet.');
+      setError(configProblem);
       return;
     }
 
