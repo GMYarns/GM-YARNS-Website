@@ -42,4 +42,6 @@ npm run dev
 ```
 
 ## Free hosting
-Build with `npm run build`. Deploy the `dist` folder to a static hosting provider with free tier and configure the three environment variables there. Add the production site URL to Supabase Auth redirect URLs. Connect `gmyarns.in` only after deployment is tested; do not delete existing GoDaddy DNS records until the host provides exact DNS values.
+Build with `npm run build`. Deploy the `dist` folder to a static hosting provider with free tier and configure the three environment variables there.
+
+The `VITE_*` values are embedded into the site at build time. After changing any of them in the hosting dashboard, trigger a new deploy — the running site keeps the old values until it is rebuilt. `VITE_SUPABASE_ANON_KEY` must be the Supabase publishable (anon) key, not the project URL and never the secret/service-role key; the site shows a clear error message if it detects a misconfigured value. Add the production site URL to Supabase Auth redirect URLs. Connect `gmyarns.in` only after deployment is tested; do not delete existing GoDaddy DNS records until the host provides exact DNS values.
