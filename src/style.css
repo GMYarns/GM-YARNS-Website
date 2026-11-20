@@ -7,3 +7,15 @@
 body{font-weight:500}
 p,small,label,.sub,.type,.stock,.count,.notice,.check,.catalogue-filter label,.catalogue-filter select,.dialog select,.dialog input,.dialog label,.product-title h2,.product-body,.zoom-hint,footer p,footer a,footer small{font-weight:600}
 .intro h1,.dialog h2,.empty h3,.product-title h2{font-weight:800}
+
+/* Stronger, consistently bold typography across customer and owner screens */
+body, body * {
+  font-weight: 700 !important;
+}
+.brand, .eyebrow, .intro h1, .dialog h2, .empty h3,
+.product-title h2, .price, footer .footer-brand {
+  font-weight: 800 !important;
+}
+button, input, select, textarea {
+  font-weight: 700 !important;
+}
