@@ -19,3 +19,11 @@ body, body * {
 button, input, select, textarea {
   font-weight: 700 !important;
 }
+
+/* Clearly labelled product specifications below each product photo */
+.product-details{display:flex;flex-direction:column;gap:8px;margin:13px 0 4px;padding:13px 14px;background:#f6f9f6;border:1px solid #e5eee7;border-radius:10px}
+.product-details p{display:grid;grid-template-columns:112px minmax(0,1fr);gap:8px;margin:0;font-size:14px;line-height:1.45;color:#334b3b}
+.product-details strong{font-weight:800!important;color:#244b35}
+.product-details span{font-weight:700!important;overflow-wrap:anywhere}
+.product-details p:nth-child(3) span{color:#176b45}
+@media(max-width:540px){.product-details{gap:9px;padding:12px}.product-details p{grid-template-columns:105px minmax(0,1fr);font-size:14px}}
